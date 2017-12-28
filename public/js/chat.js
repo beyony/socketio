@@ -2,22 +2,51 @@
 
 var socket = io.connect('http://localhost:4000');
 
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
 
-// query DOM
- var message = document.getElementById('message');
- var handle = document.getElementById('handle');
- var btn = document.getElementById('btn');
- var output = document.getElementById('output');
+
+
+// parameters
+
+var fillStyle = '#000000';
+var width = 5;
+var height = 5;
+
+
+// viewmodel
+
+var vm = {
+  fillStyle: ko.observable('000000'),
+  width: ko.observable(5),
+  height: ko.observable(5)
+}
+
+
 
 
 // emit events
 
-btn.addEventListener('click', function() {
-  socket.emit('chat', {
-    message: message.value,
-    handle: handle.value
-  });
-});
+canvas.addEventListener('click', function(event) {
+
+  console.log(canvas.offsetLeft);
+
+
+  var data = {
+    x: event.clientX - canvas.offsetLeft,
+    y: event.clientY - canvas.offsetTop,
+    w: vm.width(),
+    h: vm.height(),
+    c: '#' + vm.fillStyle()
+  };
+
+
+
+
+  socket.emit('draw', data);
+
+
+})
 
 
 
@@ -25,6 +54,18 @@ btn.addEventListener('click', function() {
 
 // listen for events
 
-socket.on('chat', function(data) {
-  output.innerHTML += '<p><strong>' + data.handle + ':</strong>' + data.message + '</p>';
+socket.on('draw', function(data) {
+  drawPoint(data);
 })
+
+
+function drawPoint(data) {
+  ctx.fillStyle = data.c;
+  ctx.fillRect(data.x, data.y, data.w, data.h);
+}
+
+
+
+
+// init viewmodel
+ko.applyBindings(vm);

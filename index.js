@@ -19,7 +19,6 @@ var sockets = [];
 io.on('connection', function(socket) {
   console.log("made socket connection");
   sockets.push(socket);
-  console.log(socket.id);
 
 
   socket.on('chat', function(data) {
@@ -31,5 +30,14 @@ io.on('connection', function(socket) {
 
     //socket.emit('chat', data);
   });
+
+
+
+
+  socket.on('draw', function(data) {
+    for (var i = 0; i < sockets.length; i++) {
+      sockets[i].emit('draw', data);
+    }
+  })
 
 });

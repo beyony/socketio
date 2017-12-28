@@ -4,3 +4,7 @@ body {
   background: #222;
   padding: 8%;
 }
+
+canvas {
+  border: 1px solid #444;
+}
